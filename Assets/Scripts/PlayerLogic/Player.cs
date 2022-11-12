@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Assets.Scripts.PlayerLogic
 {
@@ -10,7 +11,9 @@ namespace Assets.Scripts.PlayerLogic
 
         public PlayerMovement Movement => _movement;
         public AbstractGun CurrentGun => _currentGun;
-        
+
+        public event Action NewGunEvent;
+
         private void Awake()
         {
             _movement = GetComponent<PlayerMovement>();
@@ -21,6 +24,7 @@ namespace Assets.Scripts.PlayerLogic
         {
             // какая то логика поднятия оружия
             // _currentGun = поднятое оружие
+            NewGunEvent?.Invoke();
         }
     }
 }

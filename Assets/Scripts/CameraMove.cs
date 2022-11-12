@@ -10,40 +10,59 @@ namespace Assets.Scripts
         private const string MouseY = "Mouse Y";
         #endregion
 
+        #region SerializeFields
         [SerializeField] private float Sensitivity;
         [SerializeField] private Player Player;
         [SerializeField] private float VerticalLower;
         [SerializeField] private float VerticalUpper;
+        #endregion
 
-        private float _currentVerticalAngle;
+        #region PrivateFields
         private AbstractGun _currentGun;
+        private float _currentVerticalAngle;
+        private float _mouseY;
+        private float _mouseX;
+        #endregion
 
+        #region UnityMethods
         private void Start()
         {
             _currentGun = Player.CurrentGun;
+            
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         private void Update()
         {
             RotateCamera();
+            RotatePlayer();
         }
+        private void OnEnable()
+        {
+            Player.NewGunEvent += OnNewGun;
+        }
+        private void OnDisable()
+        {
+            Player.NewGunEvent -= OnNewGun;
+        }
+        #endregion
 
         private void RotateCamera()
         {
-            var mouseY = Input.GetAxis(MouseY) * Sensitivity * Time.deltaTime;
-            var mouseX = Input.GetAxis(MouseX) * Sensitivity * Time.deltaTime;
+            _mouseY = -Input.GetAxis(MouseY) * Sensitivity * Time.deltaTime;
+            _mouseX = Input.GetAxis(MouseX) * Sensitivity * Time.deltaTime;
 
-            _currentVerticalAngle = Mathf.Clamp(_currentVerticalAngle - mouseY, VerticalLower, VerticalUpper);
+            _currentVerticalAngle = Mathf.Clamp(_currentVerticalAngle + _mouseY, VerticalLower, VerticalUpper);
             transform.localRotation = Quaternion.Euler(_currentVerticalAngle, 0f, 0f);
-
-            Player.transform.Rotate(0f, mouseX, 0f);
-
-          /*if (_currentGun != Player.CurrentGun)
-                _currentGun = Player.CurrentGun;
-
-            if (_currentGun is not null)
-                _currentGun.transform.Rotate(0, 0, mouseY);*/
+        }
+        private void RotatePlayer()
+        {
+            Player.transform.Rotate(0f, _mouseX, 0f);
+            _currentGun.transform.localRotation = Quaternion.Euler(_currentVerticalAngle, 0f, 0f);
+        }
+        private void OnNewGun()
+        {
+            _currentGun = Player.CurrentGun;
         }
     }
 }

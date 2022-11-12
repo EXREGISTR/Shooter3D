@@ -16,9 +16,6 @@ namespace Assets.Scripts.Guns
             if (enemyComponent)
                 HitEvent?.Invoke(Damage);
 
-            if (enemyComponent)
-                Debug.Log(enemyComponent);
-
             Destroy(gameObject);
         }
     }
