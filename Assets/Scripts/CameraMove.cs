@@ -1,5 +1,6 @@
 using UnityEngine;
 using Assets.Scripts.PlayerLogic;
+using System.Drawing;
 
 namespace Assets.Scripts
 {
@@ -58,7 +59,8 @@ namespace Assets.Scripts
         private void RotatePlayer()
         {
             Player.transform.Rotate(0f, _mouseX, 0f);
-            _currentGun.transform.localRotation = Quaternion.Euler(_currentVerticalAngle, 0f, 0f);
+            var rotationPoint = GameObject.Find("RotationPoint");
+            rotationPoint.transform.localRotation = Quaternion.Euler(_currentVerticalAngle, 0f, 0f);
         }
         private void OnNewGun()
         {
