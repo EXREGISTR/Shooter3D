@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts.Guns
 {
@@ -7,16 +6,35 @@ namespace Assets.Scripts.Guns
     {
         public float Damage { get; set; }
 
-        public static event Action<float> HitEvent;
+        [SerializeField] private float MaxDistanceExistence;
+
+        private float _distance;
+        private Vector3 _lastPosition;
+
+        #region UnityMethods
+        private void Start()
+        {
+            _lastPosition = transform.position;
+        }
+
+        private void FixedUpdate()
+        {
+            _distance += Vector3.Distance(transform.position, _lastPosition);
+            _lastPosition = transform.position;
+
+            if (_distance >= MaxDistanceExistence)
+                Destroy(gameObject);
+        }
 
         private void OnCollisionEnter(Collision collision)
         {
             var enemyComponent = collision.gameObject.GetComponent<Enemy>();
 
             if (enemyComponent)
-                HitEvent?.Invoke(Damage);
+                enemyComponent.OnHit(Damage);
 
             Destroy(gameObject);
         }
+        #endregion
     }
 }
